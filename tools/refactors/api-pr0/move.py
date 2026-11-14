@@ -297,7 +297,7 @@ def step2():
         if new != text:
             p.write_text(new)
             changed.append(f)
-    pathlib.Path('/box/shared/api-lead/pr0/changed-files.txt').write_text('\n'.join(changed))
+    pathlib.Path('.local/api-pr0-changed-files.txt').write_text('\n'.join(changed))
     print(len(changed), 'files rewritten')
 
 
