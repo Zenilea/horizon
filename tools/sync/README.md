@@ -1,9 +1,4 @@
-# Upstream integration checks
-
-`audit_launcher_restoration.py --upstream <sha> --upstream-base <sha>` inventories
-changed launcher files and fork commits. It marks whole upstream takes without
-judging whether a fork hunk is a permitted Horizon-layer restoration or mod work
-that must remain. Reviewers check the inventory and the resulting corrections.
+# File-size baseline
 
 ## File-size baseline provenance
 
@@ -46,12 +41,11 @@ that this is an upstream sync and that the listed restoration growth is justifie
 
 The fetch is required on every changed sync declaration; an unreachable upstream,
 a timeout or missing history fails closed, even if a previous fetch left a cached
-ref. Dyna verify therefore fails, with a network-required message, if its runner
+ref. CI therefore fails, with a network-required message, if its runner
 cannot reach GitHub. `HORIZON_UPSTREAM_URL` overrides the URL for local bare-repo
 tests; normal CI leaves it unset.
 
-The Dyna verify checkout initially uses the checkout action's shallow default,
-then its `Fetch this commit's history` step fetches `HEAD` with `--unshallow` before
-running the file-size check. This retains the upstream-parent merge in history.
+A CI checkout must hold this commit's full history (fetch `HEAD` with `--unshallow`
+from a shallow checkout) before running the file-size check. This retains the upstream-parent merge in history.
 The checker refuses a still-shallow checkout with an explicit full-history error;
 it never treats missing history as approval.
