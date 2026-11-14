@@ -94,13 +94,13 @@ use gpui::{
 };
 use horizon_launcher::account::{self, Accounts, SignIn, SignInState};
 use horizon_launcher::backend::{self, Job, Msg, Release, Running, Settings, Updates};
+use horizon_launcher::build_import;
 use horizon_launcher::i18n::{self, tr, trf};
 use horizon_launcher::instances;
 use horizon_launcher::native_mods;
 use horizon_launcher::native_status;
 use horizon_launcher::storage;
 use horizon_launcher::telemetry;
-use horizon_launcher::{build_import, identity};
 use native_consent::PendingConsent;
 use scrollbar::Scrollbar;
 use std::borrow::Cow;
@@ -3063,7 +3063,7 @@ impl Launcher {
                 .child(
                     shell::text(theme::night::TITLE, shell::c(n.ink))
                         .font_family(theme::DISPLAY_FONT)
-                        .child(tr(identity::WINDOW_TITLE)),
+                        .child(tr("Horizon")),
                 )
         });
         shell::sidebar_plate(&t)
@@ -5540,8 +5540,8 @@ fn page_after_startup(page: Page, data_folder_failed: bool) -> Page {
 fn menus() -> Vec<Menu> {
     vec![
         Menu {
-            name: identity::DISPLAY_NAME.into(),
-            items: vec![MenuItem::action(tr(identity::QUIT_LABEL), Quit)],
+            name: "Horizon Launcher".into(),
+            items: vec![MenuItem::action(tr("Quit Horizon Launcher"), Quit)],
             disabled: false,
         },
         Menu {
@@ -5730,17 +5730,10 @@ mod tests {
     #[test]
     fn the_app_menu_has_quit() {
         let menus = super::menus();
-        assert_eq!(
-            menus[0].name,
-            if cfg!(horizon_fork_launcher) {
-                "Horizon Fork Launcher (arismoko)"
-            } else {
-                "Horizon Launcher"
-            }
-        );
+        assert_eq!(menus[0].name, "Horizon Launcher");
         assert!(matches!(
             &menus[0].items[0],
-            gpui::MenuItem::Action { name, .. } if name == horizon_launcher::identity::QUIT_LABEL
+            gpui::MenuItem::Action { name, .. } if name == "Quit Horizon Launcher"
         ));
     }
 
