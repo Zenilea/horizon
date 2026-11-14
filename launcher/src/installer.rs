@@ -7,7 +7,7 @@
 //! launcher's data folder only when asked, the game's folder never.
 //!
 //! Nothing here deletes a folder it didn't make: the install folder is always called
-//! [`APP_NAME`] ([`folder_for`]) and is removed with `remove_dir`, which only takes an empty one.
+//! "Horizon Launcher" ([`folder_for`]) and is removed with `remove_dir`, which only takes an empty one.
 //!
 //! Command lines (handled in `main` before the CLI parser, so MCP never sees them):
 //! `horizon-launcher-setup.exe` (window), `... setup --quiet [--dir <folder>] [--desktop-shortcut]`,
@@ -24,7 +24,7 @@ use winreg::RegKey;
 pub const APP_NAME: &str = "Horizon Launcher";
 const BINARY: &str = "horizon-launcher.exe";
 const PUBLISHER: &str = "Horizon";
-const ABOUT_URL: &str = "https://playhorizon.dev";
+const ABOUT_URL: &str = horizon_addresses::LAUNCHER_ABOUT;
 const UNINSTALL_KEY: &str = r"Software\Microsoft\Windows\CurrentVersion\Uninstall\HorizonLauncher";
 const OWN_KEY: &str = r"Software\Horizon\Launcher";
 const ASIDE_PREFIX: &str = "horizon-launcher-uninstall-";
@@ -46,7 +46,7 @@ pub enum Step {
 
 #[derive(Clone, Debug)]
 pub struct Options {
-    /// Where the launcher goes (always a folder named for [`APP_NAME`]).
+    /// Where the launcher goes (always a folder called "Horizon Launcher").
     pub dir: PathBuf,
     pub desktop: bool,
     /// Uninstall only: also delete the launcher's data folder.
@@ -116,7 +116,7 @@ pub fn default_dir() -> PathBuf {
         .join(APP_NAME)
 }
 
-/// The install folder for a folder the player picked: always named for [`APP_NAME`], so
+/// The install folder for a folder the player picked: always one called "Horizon Launcher", so
 /// uninstalling never has to guess what is ours.
 pub fn folder_for(chosen: &Path) -> PathBuf {
     if chosen
@@ -452,9 +452,7 @@ fn builds_are_launchers(builds: &Path, data: &Path, location: Option<&Roots>) ->
 /// Takes the install away. Returns what could not be removed (a file in use, say).
 pub fn uninstall(remove_data: bool, progress: impl Fn(Step, f32)) -> Result<Vec<String>, String> {
     let dir = registered()
-        .ok_or_else(|| {
-            crate::i18n::tr("Horizon Launcher is not installed for this account.").to_string()
-        })?
+        .ok_or("Horizon Launcher is not installed for this account.")?
         .dir;
     close_running_launchers(&progress);
     clean_aside(&dir);
@@ -646,9 +644,9 @@ mod tests {
     #[test]
     fn uninstall_deletes_only_folders_the_launcher_made() {
         // The default folder, and one `HORIZON_LAUNCHER_HOME` names the same.
-        let default = Path::new("profile").join("horizon-launcher");
-        assert!(made_by_launcher(&default, None));
-        assert!(builds_are_launchers(&default, &default, None));
+        let default = Path::new(r"C:\Users\p\AppData\Roaming\horizon-launcher");
+        assert!(made_by_launcher(default, None));
+        assert!(builds_are_launchers(default, default, None));
         assert!(!made_by_launcher(Path::new(r"D:\Documents"), None));
         assert!(!made_by_launcher(Path::new(r"D:\Games\launcher"), None));
 

@@ -83,7 +83,7 @@ pub fn render(theme: &Theme, window: &Window) -> Option<Div> {
         .px(px(12.))
         .on_mouse_down(MouseButton::Left, |_, window, _| window.start_window_move())
         .child(mark(16., theme))
-        .child(blocks::pixel(13., FontWeight::MEDIUM).child(horizon_launcher::i18n::tr("Horizon")));
+        .child(blocks::pixel(13., FontWeight::MEDIUM).child("Horizon"));
 
     let mut bar = div()
         .relative()
@@ -428,9 +428,7 @@ mod windows {
             .px(px(12.))
             .window_control_area(WindowControlArea::Drag)
             .child(mark(16., theme))
-            .child(
-                blocks::pixel(13., FontWeight::MEDIUM).child(horizon_launcher::i18n::tr("Horizon")),
-            );
+            .child(blocks::pixel(13., FontWeight::MEDIUM).child("Horizon"));
         Some(
             div()
                 .relative()

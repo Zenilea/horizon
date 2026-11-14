@@ -3063,7 +3063,7 @@ impl Launcher {
                 .child(
                     shell::text(theme::night::TITLE, shell::c(n.ink))
                         .font_family(theme::DISPLAY_FONT)
-                        .child(tr("Horizon")),
+                        .child("Horizon"),
                 )
         });
         shell::sidebar_plate(&t)
@@ -5541,7 +5541,7 @@ fn menus() -> Vec<Menu> {
     vec![
         Menu {
             name: "Horizon Launcher".into(),
-            items: vec![MenuItem::action(tr("Quit Horizon Launcher"), Quit)],
+            items: vec![MenuItem::action("Quit Horizon Launcher", Quit)],
             disabled: false,
         },
         Menu {
