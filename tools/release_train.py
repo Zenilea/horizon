@@ -602,7 +602,7 @@ def green_main_head(parity=False, eligible=None):
     releases), the newest commit parity-main passed on whose checks passed too: parity-main runs on batches of
     merges, so the commits a run skipped are covered by the next one, and a superseded run counts for nothing. A
     later batch that failed holds only the merges after that commit, which the green one doesn't contain."""
-    if REPO == "arismoko/horizon":
+    if REPO == "horizon-rust/horizon":
         # Runs are ordered by creation, not completion: a late old run must not
         # displace a newer push. Paginate beyond bursts of cancelled main runs.
         pages = gh_json("api", "--paginate", "--slurp",

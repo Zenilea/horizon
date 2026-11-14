@@ -52,7 +52,7 @@ const matrix = context(state.matrix), vars = context(state.vars), inputs = state
 const expression = state.expression, fromJSON = JSON.parse, toJSON = JSON.stringify;
 console.log(JSON.stringify(eval(expression)));
 """
-        def evaluate(expression, matrix, trusted, repository="arismoko/horizon"):
+        def evaluate(expression, matrix, trusted, repository="horizon-rust/horizon"):
             result = subprocess.run(["node", "-e", script], input=json.dumps({"expression": expression, "matrix": matrix, "inputs": {"trusted": trusted}, "vars": variables, "github": {"repository": repository}}), text=True, capture_output=True, check=True)
             return json.loads(result.stdout)
         default_mac = ["self-hosted", "macOS", "horizon-nightly"]
@@ -182,7 +182,7 @@ console.log(JSON.stringify(eval(expression)));
             stub = root / "gh"
             stub.write_text("#!/bin/sh\nprintf '[]'\n")
             stub.chmod(0o755)
-            result = subprocess.run(["bash", "-c", shell], cwd=root, env={**os.environ, "DRY_RUN": "true", "GITHUB_REPOSITORY": "arismoko/horizon", "PATH": str(root) + os.pathsep + os.environ["PATH"]}, text=True, capture_output=True)
+            result = subprocess.run(["bash", "-c", shell], cwd=root, env={**os.environ, "DRY_RUN": "true", "GITHUB_REPOSITORY": "horizon-rust/horizon", "PATH": str(root) + os.pathsep + os.environ["PATH"]}, text=True, capture_output=True)
             self.assertNotEqual(result.returncode, 0)
             self.assertIn("smoke", result.stdout.lower())
 

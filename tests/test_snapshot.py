@@ -162,7 +162,7 @@ class SnapshotToolsTests(unittest.TestCase):
             back = os.getcwd()
             os.chdir(folder)
             try:
-                env = {"GITHUB_REPOSITORY": "arismoko/horizon", "GITHUB_OUTPUT": str(out), "NIGHTLY_BASE": sha}
+                env = {"GITHUB_REPOSITORY": "horizon-rust/horizon", "GITHUB_OUTPUT": str(out), "NIGHTLY_BASE": sha}
                 with mock.patch.dict(os.environ, env), mock.patch.object(nightly, "git"), \
                         mock.patch.object(nightly.train, "channel_head", return_value=sha) as gate, \
                         mock.patch.object(nightly, "sdk_ready", return_value=True), \

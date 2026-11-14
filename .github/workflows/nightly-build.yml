@@ -156,13 +156,13 @@ jobs:
       # The fork's Nightly is exactly an SDK's build, and carries that SDK's index in its signed sums, so a game's build
       # id and SDK come from the game release itself (checked against sdk-<sha>'s SHA256SUMS here).
       - name: The SDK index the Nightly carries (sdk.json of sdk-<sha>)
-        if: steps.pick.outputs.build == 'true' && github.repository == 'arismoko/horizon' && steps.pick.outputs.sdk != 'false'
+        if: steps.pick.outputs.build == 'true' && github.repository == 'horizon-rust/horizon' && steps.pick.outputs.sdk != 'false'
         env:
           GH_TOKEN: ${{ github.token }}
           SHA: ${{ steps.pick.outputs.sha }}
         run: python3 tools/ci/nightly.py sdk-index "$SHA" sdk.json
       - uses: actions/upload-artifact@v7
-        if: steps.pick.outputs.build == 'true' && github.repository == 'arismoko/horizon' && steps.pick.outputs.sdk != 'false'
+        if: steps.pick.outputs.build == 'true' && github.repository == 'horizon-rust/horizon' && steps.pick.outputs.sdk != 'false'
         with:
           name: horizon-sdk-index
           path: sdk.json
@@ -222,7 +222,7 @@ jobs:
           fi
           # The fork's Nightly carries its SDK's index (the pick job fetched it); upstream's has no SDK.
           # A snapshot's dry run of a commit whose SDK is not published yet has none (nightly.py pick_snapshot warns).
-          sdk=(); if [[ "$GITHUB_REPOSITORY" == arismoko/horizon && ( "$KIND" == nightly || -f dist/sdk.json ) ]]; then sdk=(dist/sdk.json); fi
+          sdk=(); if [[ "$GITHUB_REPOSITORY" == horizon-rust/horizon && ( "$KIND" == nightly || -f dist/sdk.json ) ]]; then sdk=(dist/sdk.json); fi
           bash tools/ci/sign_release.sh "$KIND" dist/horizon-linux-x86_64.tar.gz dist/horizon-windows-x64.zip \
             ${arm64[@]+"${arm64[@]}"} ${musl[@]+"${musl[@]}"} ${sdk[@]+"${sdk[@]}"} \
             dist/horizon-macos-arm64.zip ${macos_x64[@]+"${macos_x64[@]}"} dist/horizon-server-linux-x86_64.tar.gz \
@@ -279,7 +279,7 @@ jobs:
           if ! python3 tools/release_train.py gate --kind game --smoke dist/smoke-test.json ${BLOCKERS:+--blockers}; then
             # The fork uses a dry run as release-readiness evidence: a missing/failed smoke
             # report must fail it, not produce a misleading green workflow.
-            [[ "$DRY_RUN" == true && "$GITHUB_REPOSITORY" != arismoko/horizon ]] || { echo "::error::Nothing published"; exit 1; }
+            [[ "$DRY_RUN" == true && "$GITHUB_REPOSITORY" != horizon-rust/horizon ]] || { echo "::error::Nothing published"; exit 1; }
             echo "::warning::A real run would publish nothing"
           fi
       - name: Publish as the `nightly` pre-release
@@ -305,7 +305,7 @@ jobs:
           else
             echo "::warning::horizon-windows-arm64.zip is missing: the Nightly goes out without it (ARM64 launchers install the x64 build)"
           fi
-          sdk=(); if [[ "$GITHUB_REPOSITORY" == arismoko/horizon ]]; then sdk=("dist/sdk.json#The mod SDK of this build (sdk.json; its files are the release sdk-$SHA)"); fi
+          sdk=(); if [[ "$GITHUB_REPOSITORY" == horizon-rust/horizon ]]; then sdk=("dist/sdk.json#The mod SDK of this build (sdk.json; its files are the release sdk-$SHA)"); fi
           musl=()
           if [[ -f dist/horizon-linux-musl-x86_64.tar.gz ]]; then
             musl=("dist/horizon-linux-musl-x86_64.tar.gz#Game files for musl Linux (horizon-linux-musl-x86_64.tar.gz)")

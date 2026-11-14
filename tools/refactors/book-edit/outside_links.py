@@ -11,7 +11,7 @@ import re
 
 ROOT = Path(__file__).resolve().parents[3]
 SRC = ROOT / "docs/modding/src"
-GITHUB = "https://github.com/arismoko/horizon/"
+GITHUB = "https://github.com/horizon-rust/horizon/"
 LINK = re.compile(r"(\]\()([^\s)]+)(\))|^( {0,3}\[[^\]\n]+\]:[ \t]*<?)([^\s>]+)", re.MULTILINE)
 
 

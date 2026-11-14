@@ -26,7 +26,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[3]
 SRC = ROOT / "docs/modding/src"
 BOOK = "docs/modding/src"
-SITE = "https://arismoko.github.io/horizon/"
+SITE = "https://horizon-rust.github.io/horizon/"
 NOTES = "crates/horizon-mod-vocab/src/"
 TEXT = (".md", ".rs", ".toml", ".py", ".json", ".txt", ".yml", ".html")
 AGGREGATES = {"concepts/trait-mods.md": "concepts/trait-mods", "how-to/native-mods.md": "how-to/native-mods"}

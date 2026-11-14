@@ -4,7 +4,7 @@ The `hot-paths` workflow measures the game's hot paths on main once a day and re
 small merges shows up as a trend. It measures; it never judges: nothing in it fails on a slow result, it never runs
 on a pull request, and no contributor has to run it.
 
-The trend page is `index.html` on the [`perf-history`](https://github.com/arismoko/horizon/tree/perf-history) branch
+The trend page is `index.html` on the [`perf-history`](https://github.com/horizon-rust/horizon/tree/perf-history) branch
 (download it, or read the run's summary in Actions); `runs/` beside it holds one small JSON record per run.
 
 ## What is measured

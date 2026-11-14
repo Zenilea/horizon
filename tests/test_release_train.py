@@ -20,7 +20,7 @@ def pr(number, title="Fix a thing", labels=(), paths=("crates/horizon-client/src
 
 def merged_node(number, commit):
     return {"number": number, "mergeCommit": {"oid": commit}, "title": " Fix a thing ",
-            "url": f"https://github.com/arismoko/horizon/pull/{number}",
+            "url": f"https://github.com/horizon-rust/horizon/pull/{number}",
             "mergedAt": (NOW - dt.timedelta(hours=9)).isoformat(), "author": {"login": "contributor"},
             "labels": {"nodes": []}, "closingIssuesReferences": {"nodes": []}}
 
@@ -31,7 +31,7 @@ def metadata_page(nodes):
 
 class ReleaseTrainTests(unittest.TestCase):
     def test_repository_merge_identity_before_metadata(self):
-        for repository in ("arismoko/horizon", "horizon-rust/horizon"):
+        for repository in ("horizon-rust/horizon", "horizon-rust/horizon"):
             with self.subTest(repository=repository), mock.patch.object(train, "REPO", repository), \
                     mock.patch.object(train, "run", return_value="root"), \
                     mock.patch.object(train, "merged_pull_requests", return_value=[
@@ -343,7 +343,7 @@ class ReleaseTrainTests(unittest.TestCase):
             self.assertEqual(select(event="push").stdout, topic)
             self.assertEqual(select(dry_run="true").stdout, topic)
 
-    @mock.patch.object(train, "REPO", "arismoko/horizon")
+    @mock.patch.object(train, "REPO", "horizon-rust/horizon")
     def test_fork_base_requires_same_sha_main_push_gate_jobs(self):
         def record(sha, ident, event="push", branch="main"):
             return dict(head_sha=sha, id=ident, event=event, head_branch=branch,
@@ -364,7 +364,7 @@ class ReleaseTrainTests(unittest.TestCase):
             ident = int(path.split("/runs/")[1].split("/")[0])
             self.assertIn("filter=latest", path)
             return [{"jobs": jobs[ident][:1]}, {"jobs": jobs[ident][1:]}]
-        with mock.patch.object(train, "REPO", "arismoko/horizon"), \
+        with mock.patch.object(train, "REPO", "horizon-rust/horizon"), \
                 mock.patch.object(train, "gh_json", side_effect=api) as requests:
             self.assertEqual(train.green_main_head(parity=True), "good", "missing gate is not success")
             self.assertEqual(train.green_main_head(), "good", "non-gate failure must not reject a build")
@@ -429,15 +429,15 @@ class ReleaseTrainTests(unittest.TestCase):
                 green = {"workflow_runs": [dict(head_sha=head, head_branch="main", event="push", id=7)]}
                 done = dict(status="completed", conclusion="success")
                 gates = [{"jobs": [dict(name=name, **done) for name in ("verify", "launcher")]}]
-                with mock.patch.object(train, "REPO", "arismoko/horizon"), \
+                with mock.patch.object(train, "REPO", "horizon-rust/horizon"), \
                         mock.patch.object(train, "gh_json", side_effect=[[green], gates]):
                     self.assertEqual(train.channel_head("snapshot", ""), head, "a snapshot needs the gate only")
-                with mock.patch.object(train, "REPO", "arismoko/horizon"), \
+                with mock.patch.object(train, "REPO", "horizon-rust/horizon"), \
                         mock.patch.object(train, "gh_json", side_effect=[[green], [{"jobs": gates[0]["jobs"][:1]}]]):
                     with self.assertRaisesRegex(SystemExit, "a snapshot needs the gate green"):
                         train.channel_head("snapshot", head)
                 pending = [{"jobs": gates[0]["jobs"][:1] + [dict(name="launcher", status="in_progress", conclusion=None)]}]
-                with mock.patch.object(train, "REPO", "arismoko/horizon"), \
+                with mock.patch.object(train, "REPO", "horizon-rust/horizon"), \
                         mock.patch.object(train, "gh_json", side_effect=[[green], pending]):
                     with self.assertRaisesRegex(SystemExit, "a snapshot needs the gate green"):
                         train.channel_head("snapshot", head)

@@ -36,14 +36,14 @@ def run_step(containing):
                      "release shell checks require a bash that is not WSL's, OpenSSL and sha256sum")
 class OptionalReleaseAssetsTests(unittest.TestCase):
     def test_sign_and_publish_with_each_optional_archive_combination(self):
-        for repository, mask in product(("arismoko/horizon", "horizon-rust/horizon"), range(4)):
+        for repository, mask in product(("horizon-rust/horizon", "horizon-rust/horizon"), range(4)):
             with self.subTest(repository=repository, mask=mask), tempfile.TemporaryDirectory() as folder:
                 root = Path(folder)
                 dist = root / "dist"
                 dist.mkdir()
                 present = REQUIRED | {name for i, name in enumerate(OPTIONAL) if mask & (1 << i)}
                 # The fork's Nightly carries its SDK's index in its signed sums; upstream's has no SDK.
-                if repository == "arismoko/horizon":
+                if repository == "horizon-rust/horizon":
                     present |= {"sdk.json"}
                 for name in present:
                     (dist / name).write_text(name)

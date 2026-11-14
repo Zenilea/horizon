@@ -82,12 +82,12 @@ class DryStateTests(unittest.TestCase):
                 with self.subTest(status=status):
                     env = {**os.environ, "PATH": folder + os.pathsep + os.environ["PATH"],
                            "GITHUB_RUN_ID": "123", "GITHUB_RUN_ATTEMPT": "2", "GH_TOKEN": "test",
-                           "GITHUB_API_URL": "https://api.github.com", "GITHUB_REPOSITORY": "arismoko/horizon",
+                           "GITHUB_API_URL": "https://api.github.com", "GITHUB_REPOSITORY": "horizon-rust/horizon",
                            "RUNNER_TEMP": folder, "CAPTURE": str(path / "request"), "STATUS": status}
                     result = subprocess.run(["bash", "-euo", "pipefail", "-c", script], env=env, capture_output=True)
                     self.assertEqual(result.returncode == 0, success)
                     last_attempt = 2 if success else 1
-                    self.assertIn(f"https://api.github.com/repos/arismoko/horizon/git/refs/heads/nightly/dry-run-123-{last_attempt}",
+                    self.assertIn(f"https://api.github.com/repos/horizon-rust/horizon/git/refs/heads/nightly/dry-run-123-{last_attempt}",
                                   (path / "request").read_text().splitlines())
 
     def test_failed_cleanup_retry_removes_the_producers_earlier_attempt_only(self):
@@ -118,7 +118,7 @@ else:
             curl.chmod(0o755)
             env = {**os.environ, "PATH": folder + os.pathsep + os.environ["PATH"],
                    "GITHUB_RUN_ID": "123", "GITHUB_RUN_ATTEMPT": "1", "GH_TOKEN": "test",
-                   "GITHUB_API_URL": "https://api.github.com", "GITHUB_REPOSITORY": "arismoko/horizon",
+                   "GITHUB_API_URL": "https://api.github.com", "GITHUB_REPOSITORY": "horizon-rust/horizon",
                    "RUNNER_TEMP": folder}
             first = subprocess.run(["bash", "-euo", "pipefail", "-c", script], env=env, capture_output=True)
             self.assertNotEqual(first.returncode, 0)
