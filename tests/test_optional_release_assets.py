@@ -36,7 +36,7 @@ def run_step(containing):
                      "release shell checks require a bash that is not WSL's, OpenSSL and sha256sum")
 class OptionalReleaseAssetsTests(unittest.TestCase):
     def test_sign_and_publish_with_each_optional_archive_combination(self):
-        for repository, mask in product(("horizon-rust/horizon", "horizon-rust/horizon"), range(4)):
+        for repository, mask in product(("horizon-rust/horizon", "another/fork"), range(4)):
             with self.subTest(repository=repository, mask=mask), tempfile.TemporaryDirectory() as folder:
                 root = Path(folder)
                 dist = root / "dist"

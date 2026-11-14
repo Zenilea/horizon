@@ -276,14 +276,14 @@ def listed(name: str, data: bytes, sums: str) -> bool:
 
 def signature_check(sha: str, folder: Path, names: list[str]) -> list[str]:
     """The command that checks sdk-<sha>'s SHA256SUMS signature in `folder` as the launcher does (horizon-release-sign,
-    with the fork's keys and the tag the signature must name), and the bytes of `names` against it."""
+    with this repository's keys and the tag the signature must name), and the bytes of `names` against it."""
     return ["cargo", "run", "--locked", "--quiet", "-p", "horizon-release-sign", "--", "verify",
             "--repository", "horizon-rust/horizon", "--tag", f"sdk-{sha}",
             *(argument for name in names for argument in ("--only", name)), str(folder)]
 
 
 def released(sha: str, name: str) -> bytes:
-    """The asset `name` of sdk-<sha>, once its SHA256SUMS signature is the fork's for `sdk-<sha>` and its bytes match
+    """The asset `name` of sdk-<sha>, once its SHA256SUMS signature is this repository's for `sdk-<sha>` and its bytes match
     them ([`signature_check`])."""
     with tempfile.TemporaryDirectory() as folder:
         gh("release", "download", f"sdk-{sha}", "--repo", "horizon-rust/horizon", "--dir", folder,
@@ -345,24 +345,24 @@ def green_base(repo: str, issue: str) -> Ref:
     """NIGHTLY_BASE, else a green main commit from this repository's checks
     (checks plus parity-main), never an untested fallback."""
     explicit = os.environ.get("NIGHTLY_BASE", "").strip()
-    fork = repo == "horizon-rust/horizon"
+    paired = repo == "horizon-rust/horizon"
     if explicit:
         sha = explicit
-    elif fork:
+    elif paired:
         sha = train.daily_green_commit()
     else:
         sha = train.green_main_head(parity=True)
     if not sha:
-        checks = "every leg of a daily run (no `daily-green` tag yet)" if fork else "checks and parity-main"
+        checks = "every leg of a daily run (no `daily-green` tag yet)" if paired else "checks and parity-main"
         stop(repo, issue, f"the build stopped: no recent commit of main passed {checks}, so "
                           "none is green to build on. The next build after they pass takes it.")
     if not is_ancestor(sha, "refs/remotes/origin/main"):
         stop(repo, issue, f"the build stopped: {sha[:9]} is not on main.")
     sha = git("rev-parse", sha)
-    if fork and explicit and sha != train.daily_green_commit():
+    if paired and explicit and sha != train.daily_green_commit():
         stop(repo, issue, f"the build stopped: {sha} is not the commit `daily-green` points to; a nightly builds "
                           "only the newest fully green daily run's commit, never an older one without its own daily run.")
-    if fork and not sdk_ready(sha):
+    if paired and not sdk_ready(sha):
         stop(repo, issue, f"the build stopped: {sha} has no complete published sdk-{sha} release.")
     return Ref("main", sha, dt.datetime.fromisoformat(git("show", "-s", "--format=%cI", sha)))
 
@@ -380,7 +380,7 @@ def pick(force: bool) -> None:
     dry_run = os.environ.get("DRY_RUN") == "true"
     if repo == "horizon-rust/horizon":
         if os.environ.get("NIGHTLY_PRS", "").strip():
-            stop(repo, os.environ.get("NIGHTLY_ISSUE", ""), "fork Nightlies require an SDK-paired main commit, not PR picks")
+            stop(repo, os.environ.get("NIGHTLY_ISSUE", ""), "Nightlies here require an SDK-paired main commit, not PR picks")
         return build_set(main, [], [], today, force, dry_run)
     if spec := os.environ.get("NIGHTLY_PRS", "").strip():  # a dry run's own set; the saved one stays
         return build_set(main, requested(spec, ns.lookup(repo)), [], today, force, dry_run)
